@@ -1,0 +1,3 @@
+[submodule "wikipedia-ios"]
+	path = wikipedia-ios
+	url = https://github.com/wikimedia/wikipedia-ios.git
