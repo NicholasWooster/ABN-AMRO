@@ -1,8 +1,8 @@
 #!/bin/bash
 # installs required tools for development
 
-./brew_install
-./setup_git_hooks
+scripts/brew_install
+scripts/setup_git_hooks
 
 if ! xcode-select -p > /dev/null ; then \
 	xcode-select --install; \

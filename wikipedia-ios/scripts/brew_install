@@ -1,7 +1,7 @@
 #!/bin/bash
 # Setup homebrew and upgrade required formulae
 
-./setup_homebrew
+scripts/setup_homebrew
 
 BREW_FORMULAE="clang-format swiftlint"
 

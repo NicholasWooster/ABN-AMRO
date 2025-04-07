@@ -1244,10 +1244,6 @@ class PlacesViewController: ArticleLocationCollectionViewController, UISearchBar
         mapView.selectAnnotation(articlePlace, animated: articlePlace.identifier != previouslySelectedArticlePlaceIdentifier)
         previouslySelectedArticlePlaceIdentifier = articlePlace.identifier
     }
-    
-    @objc func centerMap(location: CLLocation) {
-        self.zoomAndPanMapView(toLocation: location)
-    }
 
     // MARK: - Search History
 

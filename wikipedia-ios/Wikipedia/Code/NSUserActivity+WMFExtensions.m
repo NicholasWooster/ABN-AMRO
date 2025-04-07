@@ -53,22 +53,6 @@ __attribute__((annotate("returns_localized_nsstring"))) static inline NSString *
     return activity;
 }
 
-+ (instancetype)wmf_pageActivityWithName:(NSString *)pageName latitude:(NSNumber *)latitude longitude:(NSNumber *)longitude  {
-    NSUserActivity *activity = [self wmf_activityWithType:[pageName lowercaseString]];
-    activity.title = wmf_localizationNotNeeded(pageName);
-    if (latitude != nil && longitude != nil) {
-        activity.userInfo = @{@"WMFPage": pageName, @"latitude": latitude, @"longitude": longitude};
-    } else {
-        activity.userInfo = @{@"WMFPage": pageName};
-    }
-
-    NSMutableSet *set = [activity.keywords mutableCopy];
-    [set addObjectsFromArray:[pageName componentsSeparatedByString:@" "]];
-    activity.keywords = set;
-
-    return activity;
-}
-
 + (instancetype)wmf_contentActivityWithURL:(NSURL *)url {
     NSUserActivity *activity = [self wmf_activityWithType:@"Content"];
     activity.userInfo = @{@"WMFURL": url};
@@ -78,28 +62,14 @@ __attribute__((annotate("returns_localized_nsstring"))) static inline NSString *
 + (instancetype)wmf_placesActivityWithURL:(NSURL *)activityURL {
     NSURLComponents *components = [NSURLComponents componentsWithURL:activityURL resolvingAgainstBaseURL:NO];
     NSURL *articleURL = nil;
-    NSNumber *lat = nil;
-    NSNumber *lon = nil;
-    NSNumberFormatter *coordsFormatter = [[NSNumberFormatter alloc] init];
-    coordsFormatter.maximumFractionDigits = 16; //accounts for twice beyond the recommended max of 8 digits for 1mm precision
-    
     for (NSURLQueryItem *item in components.queryItems) {
         if ([item.name isEqualToString:@"WMFArticleURL"]) {
             NSString *articleURLString = item.value;
             articleURL = [NSURL URLWithString:articleURLString];
             break;
         }
-        
-        if ([item.name isEqualToString:@"lat"]) {
-            lat = [coordsFormatter numberFromString:item.value];
-        }
-        
-        if ([item.name isEqualToString:@"lon"]) {
-            lon = [coordsFormatter numberFromString:item.value];
-        }
     }
-    
-    NSUserActivity *activity = [self wmf_pageActivityWithName:@"Places" latitude:lat longitude:lon];
+    NSUserActivity *activity = [self wmf_pageActivityWithName:@"Places"];
     activity.webpageURL = articleURL;
     return activity;
 }
@@ -296,17 +266,6 @@ __attribute__((annotate("returns_localized_nsstring"))) static inline NSString *
 
 - (NSURL *)wmf_contentURL {
     return self.userInfo[@"WMFURL"];
-}
-
-- (CLLocation *)wmf_locationFromURL {
-    NSNumber *lat = self.userInfo[@"latitude"];
-    NSNumber *lon = self.userInfo[@"longitude"];
-    if (lat != nil && lon != nil) {
-        CLLocationDegrees latDegrees = (CLLocationDegrees)[lat floatValue];
-        CLLocationDegrees lonDegrees = (CLLocationDegrees)[lon floatValue];
-        return [[CLLocation alloc] initWithLatitude:latDegrees longitude:lonDegrees];
-    }
-    return nil;
 }
 
 + (NSURLComponents *)wmf_baseURLComponentsForActivityOfType:(WMFUserActivityType)type {

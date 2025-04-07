@@ -140,7 +140,11 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         
         appViewController.showSplashView()
         _ = appViewController.processUserActivity(activity, animated: false) { [weak self] in
-            guard let self = self else { return }
+            
+            guard let self else {
+                return
+            }
+            
             if appNeedsResume {
                 resumeAppIfNecessary()
             } else {
