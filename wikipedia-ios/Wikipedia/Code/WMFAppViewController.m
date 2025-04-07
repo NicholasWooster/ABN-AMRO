@@ -1232,10 +1232,20 @@ NSString *const WMFLanguageVariantAlertsLibraryVersion = @"WMFLanguageVariantAle
             [self setSelectedIndex:WMFAppTabTypePlaces];
             [self.currentTabNavigationController popToRootViewControllerAnimated:animated];
             NSURL *articleURL = activity.wmf_linkURL;
+            CLLocation *locationFromURL = activity.wmf_locationFromURL;
             if (articleURL) {
                 // For "View on a map" action to succeed, view mode has to be set to map.
                 [[self placesViewController] updateViewModeToMap];
                 [[self placesViewController] showArticleURL:articleURL];
+            } else if (locationFromURL) {
+                [[self placesViewController] updateViewModeToMap];
+                
+                // let the map have time to load before centering
+                NSTimeInterval delayInSeconds = 1.0;
+                dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC));
+                dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
+                    [[self placesViewController] centerMapWithLocation:locationFromURL];
+                });
             }
         } break;
         case WMFUserActivityTypeContent: {
