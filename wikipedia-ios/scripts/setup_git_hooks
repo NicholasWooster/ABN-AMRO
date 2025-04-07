@@ -1,0 +1,7 @@
+#!/bin/bash
+# sets up pre commit hooks
+
+rm -rf .git/hooks/pre-commit
+mkdir -p .git/hooks
+cp -f ./clang_format_git_diff .git/hooks/pre-commit
+cat ./strip_header >> .git/hooks/pre-commit
